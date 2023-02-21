@@ -125,7 +125,7 @@ impl OwnedTokens {
         self.indexes_dict
             .set(&key_and_value_to_str(owner, value), length);
         self.tokens_dict
-            .set(&key_and_value_to_str(owner, &length), *value);
+            .set(&key_and_value_to_str(owner, &length), (*value).clone());
         self.set_balances(owner, length + 1);
     }
 
@@ -141,7 +141,7 @@ impl OwnedTokens {
             core::cmp::Ordering::Greater => {
                 let last = self.get_token_by_index(owner, &(length - 1));
                 self.indexes_dict.set(
-                    &key_and_value_to_str(owner, &last.unwrap_or_revert()),
+                    &key_and_value_to_str(owner, &(last.clone()).unwrap_or_revert()),
                     index,
                 );
                 self.tokens_dict.set(

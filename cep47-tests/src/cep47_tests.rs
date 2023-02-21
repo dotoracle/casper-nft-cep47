@@ -61,7 +61,7 @@ fn test_deploy() {
 fn test_token_meta() {
     let (env, token, owner) = deploy();
     let user = env.next_user();
-    let token_id = TokenId::zero();
+    let token_id = "0".to_string();
     let token_meta = meta::red_dragon();
 
     token.mint_one(owner, user, token_id, token_meta.clone());
@@ -77,7 +77,7 @@ fn test_token_meta() {
 fn test_mint_one() {
     let (env, token, owner) = deploy();
     let user = env.next_user();
-    let token_id = TokenId::zero();
+    let token_id = "0".to_string();
     let token_meta = meta::red_dragon();
 
     token.mint_one(owner, user, token_id, token_meta);
@@ -95,7 +95,7 @@ fn test_mint_copies() {
     let (env, token, owner) = deploy();
     let user = env.next_user();
     let token_meta = meta::red_dragon();
-    let token_ids = vec![TokenId::zero(), TokenId::one(), TokenId::from(2)];
+    let token_ids = vec!["0".to_string(), "1".to_string(), "2".to_string()];
     token.mint_copies(owner, user, token_ids.clone(), token_meta, 3);
     let first_user_token = token.get_token_by_index(Key::Account(user), U256::from(0));
     let second_user_token = token.get_token_by_index(Key::Account(user), U256::from(1));
@@ -126,13 +126,13 @@ fn test_mint_many() {
     let (env, token, owner) = deploy();
     let user = env.next_user();
     let token_metas = vec![meta::red_dragon(), meta::gold_dragon()];
-    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    let token_ids = vec!["0".to_string(), "1".to_string()];
     token.mint_many(owner, user, token_ids.clone(), token_metas);
     let first_user_token = token.get_token_by_index(Key::Account(user), U256::from(0));
     let second_user_token = token.get_token_by_index(Key::Account(user), U256::from(1));
     let third_user_token = token.get_token_by_index(Key::Account(user), U256::from(2));
     assert_eq!(token.total_supply(), U256::from(2));
-    assert_eq!(token.balance_of(Key::Account(user)), U256::from(2));
+    assert_eq!(token.balance_of(Key::Account(user)), U256::from(2u64));
     assert_eq!(
         token.owner_of(first_user_token.unwrap()).unwrap(),
         Key::Account(user)
@@ -141,8 +141,8 @@ fn test_mint_many() {
         token.owner_of(second_user_token.unwrap()).unwrap(),
         Key::Account(user)
     );
-    assert_eq!(first_user_token, Some(token_ids[0]));
-    assert_eq!(second_user_token, Some(token_ids[1]));
+    assert_eq!(first_user_token, Some(token_ids[0].clone()));
+    assert_eq!(second_user_token, Some(token_ids[1].clone()));
     assert_eq!(third_user_token, None);
 }
 
@@ -157,10 +157,10 @@ fn test_burn_many() {
         meta::gold_dragon(),
     ];
     let token_ids = vec![
-        TokenId::zero(),
-        TokenId::one(),
-        TokenId::from(2),
-        TokenId::from(3),
+        "0".to_string(),
+        "1".to_string(),
+        "2".to_string(),
+        "3".to_string(),
     ];
 
     token.mint_many(owner, user, token_ids.clone(), token_metas);
@@ -190,10 +190,10 @@ fn test_burn_many_from_allowance_with_approve() {
         meta::gold_dragon(),
     ];
     let token_ids = vec![
-        TokenId::zero(),
-        TokenId::one(),
-        TokenId::from(2),
-        TokenId::from(3),
+        "0".to_string(),
+        "1".to_string(),
+        "2".to_string(),
+        "3".to_string(),
     ];
 
     token.mint_many(owner, user, token_ids.clone(), token_metas);
@@ -225,10 +225,10 @@ fn test_burn_many_from_allowance_without_approve() {
         meta::gold_dragon(),
     ];
     let token_ids = vec![
-        TokenId::zero(),
-        TokenId::one(),
-        TokenId::from(2),
-        TokenId::from(3),
+        "0".to_string(),
+        "1".to_string(),
+        "2".to_string(),
+        "3".to_string(),
     ];
 
     token.mint_many(owner, user, token_ids.clone(), token_metas);
@@ -241,7 +241,7 @@ fn test_burn_one() {
     let (env, token, owner) = deploy();
     let user = env.next_user();
     let token_metas = vec![meta::red_dragon(), meta::gold_dragon()];
-    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    let token_ids = vec!["0".to_string(), "1".to_string()];
     token.mint_many(owner, user, token_ids.clone(), token_metas);
 
     token.burn_one(user, user, token_ids[0]);
@@ -260,7 +260,7 @@ fn test_transfer_token() {
     let ali = env.next_user();
     let bob = env.next_user();
     let token_metas = vec![meta::red_dragon(), meta::gold_dragon()];
-    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    let token_ids = vec!["0".to_string(), "1".to_string()];
 
     token.mint_many(owner, ali, token_ids.clone(), token_metas);
 
@@ -299,15 +299,15 @@ fn test_transfer_from_tokens_with_approve() {
     let ali = env.next_user();
     let bob = env.next_user();
     let token_metas = vec![meta::red_dragon(), meta::gold_dragon()];
-    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    let token_ids = vec!["0".to_string(), "1".to_string()];
 
     token.mint_many(owner, ali, token_ids.clone(), token_metas);
     assert_eq!(token.total_supply(), U256::from(2));
     assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
     assert_eq!(token.owner_of(token_ids[0]).unwrap(), Key::Account(ali));
     assert_eq!(token.owner_of(token_ids[1]).unwrap(), Key::Account(ali));
-    token.approve(ali, owner, vec![TokenId::one()]);
-    token.transfer_from(owner, ali, bob, vec![TokenId::one()]);
+    token.approve(ali, owner, vec!["1".to_string()]);
+    token.transfer_from(owner, ali, bob, vec!["1".to_string()]);
     let new_first_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(0));
     let new_second_ali_token = token.get_token_by_index(Key::Account(ali), U256::from(1));
     let new_first_bob_token = token.get_token_by_index(Key::Account(bob), U256::from(0));
@@ -334,15 +334,15 @@ fn test_transfer_from_tokens_without_approve() {
     let ali = env.next_user();
     let bob = env.next_user();
     let token_metas = vec![meta::red_dragon(), meta::gold_dragon()];
-    let token_ids = vec![TokenId::zero(), TokenId::one()];
+    let token_ids = vec!["0".to_string(), "1".to_string()];
 
     token.mint_many(owner, ali, token_ids.clone(), token_metas);
 
     assert_eq!(token.total_supply(), U256::from(2));
     assert_eq!(token.balance_of(Key::Account(ali)), U256::from(2));
-    assert_eq!(token.owner_of(token_ids[0]).unwrap(), Key::Account(ali));
-    assert_eq!(token.owner_of(token_ids[1]).unwrap(), Key::Account(ali));
-    token.transfer_from(owner, ali, bob, vec![token_ids[0]]);
+    assert_eq!(token.owner_of(token_ids[0].clone()).unwrap(), Key::Account(ali));
+    assert_eq!(token.owner_of(token_ids[1].clone()).unwrap(), Key::Account(ali));
+    token.transfer_from(owner, ali, bob, vec![token_ids[0].clone()]);
 }
 
 #[test]
@@ -356,10 +356,10 @@ fn test_approve() {
         meta::gold_dragon(),
     ];
     let token_ids = vec![
-        TokenId::zero(),
-        TokenId::one(),
-        TokenId::from(1),
-        TokenId::from(2),
+        "0".to_string(),
+        "1".to_string(),
+        "1".to_string(),
+        "2".to_string(),
     ];
 
     token.mint_many(owner, user, token_ids.clone(), token_metas);
@@ -379,7 +379,7 @@ fn test_approve() {
 fn test_token_metadata_update() {
     let (env, token, owner) = deploy();
     let user = env.next_user();
-    let token_id = TokenId::zero();
+    let token_id = "0".to_string();
 
     token.mint_one(owner, user, token_id, meta::red_dragon());
 

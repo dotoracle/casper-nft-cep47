@@ -10,6 +10,6 @@ pub use cep47::{Error, CEP47};
 pub use contract_utils;
 
 use alloc::{collections::BTreeMap, string::String};
-use casper_types::U256;
-pub type TokenId = U256;
+// use casper_types::U256;
+pub type TokenId = String;
 pub type Meta = BTreeMap<String, String>;

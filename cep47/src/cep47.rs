@@ -63,7 +63,7 @@ pub trait CEP47<Storage: ContractStorage>: ContractContext<Storage> {
     }
 
     fn set_token_meta(&mut self, token_id: TokenId, meta: Meta) -> Result<(), Error> {
-        if self.owner_of(token_id).is_none() {
+        if self.owner_of(token_id.clone()).is_none() {
             return Err(Error::TokenIdDoesntExist);
         };
 
@@ -80,7 +80,7 @@ pub trait CEP47<Storage: ContractStorage>: ContractContext<Storage> {
 
     fn validate_token_ids(&self, token_ids: Vec<TokenId>) -> bool {
         for token_id in &token_ids {
-            if self.owner_of(*token_id).is_some() {
+            if self.owner_of((*token_id).clone()).is_some() {
                 return false;
             }
         }
@@ -98,7 +98,7 @@ pub trait CEP47<Storage: ContractStorage>: ContractContext<Storage> {
         };
 
         for token_id in &token_ids {
-            if self.owner_of(*token_id).is_some() {
+            if self.owner_of((*token_id).clone()).is_some() {
                 return Err(Error::TokenIdAlreadyExists);
             }
         }
@@ -141,7 +141,7 @@ pub trait CEP47<Storage: ContractStorage>: ContractContext<Storage> {
         let spender = self.get_caller();
         if spender != owner {
             for token_id in &token_ids {
-                if !self.is_approved(owner, *token_id, spender) {
+                if !self.is_approved(owner, (*token_id).clone(), spender) {
                     return Err(Error::PermissionDenied);
                 }
             }
@@ -188,7 +188,7 @@ pub trait CEP47<Storage: ContractStorage>: ContractContext<Storage> {
     fn approve(&mut self, spender: Key, token_ids: Vec<TokenId>) -> Result<(), Error> {
         let caller = self.get_caller();
         for token_id in &token_ids {
-            match self.owner_of(*token_id) {
+            match self.owner_of((*token_id).clone()) {
                 None => return Err(Error::WrongArguments),
                 Some(owner) if owner != caller => return Err(Error::PermissionDenied),
                 Some(_) => Allowances::instance().set(&caller, token_id, spender),
@@ -221,7 +221,7 @@ pub trait CEP47<Storage: ContractStorage>: ContractContext<Storage> {
         if owner != spender {
             let allowances_dict = Allowances::instance();
             for token_id in &token_ids {
-                if !self.is_approved(owner, *token_id, spender) {
+                if !self.is_approved(owner, (*token_id).clone(), spender) {
                     return Err(Error::PermissionDenied);
                 }
                 allowances_dict.remove(&owner, token_id);

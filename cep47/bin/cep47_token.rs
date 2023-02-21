@@ -115,7 +115,7 @@ fn mint() {
 #[no_mangle]
 fn mint_copies() {
     let recipient = runtime::get_named_arg::<Key>("recipient");
-    let token_ids = runtime::get_named_arg::<Vec<U256>>("token_ids");
+    let token_ids = runtime::get_named_arg::<Vec<TokenId>>("token_ids");
     let token_meta = runtime::get_named_arg::<Meta>("token_meta");
     let count = runtime::get_named_arg::<u32>("count");
     NFTToken::default()

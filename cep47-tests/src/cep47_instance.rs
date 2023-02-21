@@ -9,7 +9,7 @@ use casper_types::{
 };
 use test_env::{TestContract, TestEnv};
 
-pub type TokenId = U256;
+pub type TokenId = String;
 pub type Meta = BTreeMap<String, String>;
 
 pub struct CEP47Instance(TestContract);
